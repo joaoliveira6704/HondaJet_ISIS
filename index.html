@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Honda Jet ISIS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=B612+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+    body { font-family: 'B612 Mono', monospace; }
+    :root { color-scheme: dark; }
+    input[type=range] { accent-color:#FDE500; }
+    .ctrl-label { font-variant-numeric: tabular-nums; }
+
+    svg text,
+    #pitchLadder span,
+    #headingTrack span,
+    #machQnh {
+        font-family: 'B612 Mono', monospace !important;
+    }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center gap-6 py-6">
+    <div class="h-[512px] w-[512px] bg-black flex justify-center items-center shrink-0">
+        <div class="h-[476px] w-[488px] mt-3 rounded-lg flex justify-between items-center">
+
+            <!-- Airspeed Tape -->
+            <div id="speedTape" class="h-full w-[66px] bg-[#333333] rounded-l-md flex items-center relative">
+                <div class="absolute -translate-y-4 z-20">
+                    <svg width="85" height="97" viewBox="0 0 85 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="speedClip">
+                                <path d="M2 81.9297V15.573H53.7627V2H83V95H53.7627V81.9297H2Z"/>
+                            </clipPath>
+                        </defs>
+                        <path d="M2 81.9297V15.573H53.7627V2H83V95H53.7627V81.9297H2Z" fill="#161616" stroke="white" stroke-width="2"/>
+                        <!-- Dynamic track for the tens and hundreds digits -->
+                        <g clip-path="url(#speedClip)" id="airspeedHundredsTrack"></g>
+                        <!-- Dynamic track for rolling 1-digit airspeed unit numbers -->
+                        <g clip-path="url(#speedClip)" id="airspeedTapeTrack"></g>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="h-full w-[355px] mx-[3px] flex flex-col justify-between">
+                <div id="machQnh" class="h-[33px] w-full flex justify-between items-center text-2xl text-white">
+                    <p id="machValue"></p>
+                    <p id="qnhValue"></p>
+                </div>
+                <div id="artificialHorizon" class="h-[384px] w-full relative flex items-center justify-center overflow-hidden">
+                    <!-- Pitch ladder static wrapper -->
+                    <div class="absolute inset-0 z-10 pointer-events-none" style="clip-path: path('M 0 384 L 355 384 L 355 122 L 298.7 122 A 140 140 0 0 0 56.3 122 L 0 122 Z');">
+                        <div id="pitchLadder" class="absolute inset-0 flex flex-col items-center justify-center"></div>
+                    </div>
+                    <!-- Earth/Ground (moves with pitch and roll) -->
+                    <div id="groundEarth" class="absolute flex flex-col" style="height: 1600px; width: 1000px; top: 50%; left: 50%; margin-top: -800px; margin-left: -500px;">
+                        <div class="bg-[#0388A3]" style="height: 1000px; width: 1000px;"></div>
+                        <div class="bg-white h-1 w-full" style="width: 1000px;"></div>
+                        <div class="bg-[#612D20]" style="height: 1000px; width: 1000px;"></div>
+                    </div>
+
+                    <!-- Roll arc -->
+                    <div id="staticRollIndicator" class="absolute -translate-y-32 z-20">
+                        <svg width="310" height="102" viewBox="0 0 310 102" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M270.749 44.876L265.438 65.0623L285.624 59.7515L270.749 44.876Z" stroke="white" stroke-width="4"/>
+                        <path d="M230 43L243 23" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M155.864 22.5192L168.123 1.50387C168.512 0.837214 168.031 0 167.259 0H142.741C141.97 0 141.489 0.837213 141.878 1.50387L154.137 22.5192C154.522 23.1807 155.478 23.1807 155.864 22.5192Z" fill="white"/>
+                        <path d="M3.50524 86.3576C2.55022 85.8026 1.32611 86.1269 0.771123 87.0819C0.216132 88.0369 0.540418 89.261 1.49544 89.816L2.50034 88.0868L3.50524 86.3576ZM155.5 25H157.5V21H155.5V23V25ZM2.50034 88.0868L1.49544 89.816L20.2008 100.686L21.2057 98.9571L22.2106 97.2278L3.50524 86.3576L2.50034 88.0868ZM23.9887 98.1987L25.7304 99.1817C40.2937 73.3799 84.9377 25 155.5 25V23V21C83.0129 21 37.2459 70.642 22.247 97.2156L23.9887 98.1987ZM21.2057 98.9571L20.2008 100.686C22.1481 101.818 24.6274 101.136 25.7304 99.1817L23.9887 98.1987L22.247 97.2156C22.2437 97.2213 22.2413 97.2243 22.2401 97.2257C22.2389 97.2271 22.2379 97.2279 22.2372 97.2285C22.2355 97.2298 22.2329 97.2313 22.2293 97.2322C22.2258 97.2332 22.2234 97.2331 22.2224 97.233C22.222 97.2329 22.2213 97.2328 22.22 97.2324C22.2189 97.232 22.2158 97.2309 22.2106 97.2278L21.2057 98.9571Z" fill="white"/>
+                        <path d="M80.0003 43L67.0003 23" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M103.084 30.7893L97.5003 18" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M129.206 23.7933L127.089 10" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M39.2518 44.876L44.5627 65.0623L24.3763 59.7515L39.2518 44.876Z" stroke="white" stroke-width="4"/>
+                        <path d="M3.00524 86.3576C2.05022 85.8026 0.826115 86.1269 0.271123 87.0819C-0.283868 88.0369 0.0404177 89.261 0.995435 89.816L2.00034 88.0868L3.00524 86.3576ZM155 25H157V21H155V23V25ZM2.00034 88.0868L0.995435 89.816L19.7008 100.686L20.7057 98.9571L21.7106 97.2278L3.00524 86.3576L2.00034 88.0868ZM23.4887 98.1987L25.2304 99.1817C39.7937 73.3799 84.4377 25 155 25V23V21C82.5129 21 36.7459 70.642 21.747 97.2156L23.4887 98.1987ZM20.7057 98.9571L19.7008 100.686C21.6481 101.818 24.1274 101.136 25.2304 99.1817L23.4887 98.1987L21.747 97.2156C21.7437 97.2213 21.7413 97.2243 21.7401 97.2257C21.7389 97.2271 21.7379 97.2279 21.7372 97.2285C21.7355 97.2298 21.7329 97.2313 21.7293 97.2322C21.7258 97.2332 21.7234 97.2331 21.7224 97.233C21.722 97.2329 21.7213 97.2328 21.72 97.2324C21.7189 97.232 21.7158 97.2309 21.7106 97.2278L20.7057 98.9571Z" fill="white"/>
+                        <path d="M206.917 30.7893L212.5 18" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M180.794 23.7933L182.912 10" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M306.995 86.3576C307.95 85.8026 309.175 86.1269 309.73 87.0819C310.285 88.0369 309.96 89.261 309.005 89.816L308 88.0868L306.995 86.3576ZM155 25H153V21H155V23V25ZM308 88.0868L309.005 89.816L290.3 100.686L289.295 98.9571L288.29 97.2278L306.995 86.3576L308 88.0868ZM286.512 98.1987L284.77 99.1817C270.207 73.3799 225.563 25 155 25V23V21C227.488 21 273.255 70.642 288.254 97.2156L286.512 98.1987ZM289.295 98.9571L290.3 100.686C288.353 101.818 285.873 101.136 284.77 99.1817L286.512 98.1987L288.254 97.2156C288.257 97.2213 288.259 97.2243 288.261 97.2257C288.262 97.2271 288.263 97.2279 288.263 97.2285C288.265 97.2298 288.268 97.2313 288.271 97.2322C288.275 97.2332 288.277 97.2331 288.278 97.233C288.279 97.2329 288.279 97.2328 288.281 97.2324C288.282 97.232 288.285 97.2309 288.29 97.2278L289.295 98.9571Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <!-- Dynamic Roll Pointer -->
+                    <div id="rollPointerContainer" class="absolute inset-0 z-30 flex justify-center pointer-events-none">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin-top: 37px;">
+                            <path d="M12 0 L24 22 H0 Z" fill="white" />
+                        </svg>
+                    </div>
+                    <!-- Yellow aircraft symbol -->
+                    <div class="absolute translate-y-2 z-20">
+                        <svg width="201" height="27" viewBox="0 0 201 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.5 9.5V0.5H46.5V26.5H37V9.5H0.5Z" fill="#FAE947" stroke="black"/>
+                        <rect x="96" y="0.5" width="9" height="9" fill="#FAE947" stroke="black"/>
+                        <path d="M200.5 9.5V0.5H154.5V26.5H164V9.5H200.5Z" fill="#FAE947" stroke="black"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="h-[12px] relative flex items-center justify-center">
+                    <div id="hdgPointer" class="absolute !z-[200]">
+                        <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.1675 0C17.9373 0 18.4186 0.833342 18.0338 1.5L9.95074 15.5C9.56584 16.1667 8.60322 16.1667 8.21832 15.5L0.135315 1.5C-0.24933 0.833444 0.231959 0.000194643 1.00153 0H17.1675Z" fill="white"/>
+                        </svg>
+                    </div>
+                </div>
+                <div id="headingTape" class="h-[55px] w-full bg-[#333333] relative overflow-hidden">
+                    <div id="headingTrack" class="absolute inset-0 flex items-start justify-center pointer-events-none"></div>
+                </div>
+            </div>
+
+            <!-- Altitude Tape -->
+            <div id="altimeterTape" class="h-full w-[63px] bg-[#333333] rounded-r-md flex items-center relative ">
+                <div class="absolute -translate-y-3 -translate-x-[60px] z-20">
+                    <svg width="122" height="97" viewBox="0 0 122 97" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="altitudeClip">
+                                <path d="M2 81.5V15.5H70V2H120V94.5H70V81.5H2Z"/>
+                            </clipPath>
+                        </defs>
+                        <path d="M2 81.5V15.5H70V2H120V94.5H70V81.5H2Z" fill="#161616" stroke="white" stroke-width="2"/>
+                        <!-- Dynamic track for the hundreds digits -->
+                        <g clip-path="url(#altitudeClip)" id="altitudeHundredsTrack"></g>
+                        <!-- Dynamic track for rolling 2-digit altitude numbers -->
+                        <g clip-path="url(#altitudeClip)" id="altitudeTapeTrack"></g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="w-[512px] bg-[#161616] rounded-lg p-4 grid grid-cols-2 gap-x-6 gap-y-3 text-white text-sm">
+        <div class="col-span-2 flex items-center justify-between">
+            <label for="pitchSlider">Pitch <span id="pitchLabel" class="ctrl-label text-[#FDE500]"></span>°</label>
+            <input type="range" id="pitchSlider" min="-90" max="90" step="0.5" class="w-64">
+        </div>
+        <div class="col-span-2 flex items-center justify-between">
+            <label for="rollSlider">Roll <span id="rollLabel" class="ctrl-label text-[#FDE500]"></span>°</label>
+            <input type="range" id="rollSlider" min="-180" max="180" step="1" class="w-64">
+        </div>
+        <div class="col-span-2 flex items-center justify-between">
+            <label for="headingSlider">Heading <span id="headingLabel" class="ctrl-label text-[#FDE500]"></span>°</label>
+            <input type="range" id="headingSlider" min="0" max="359.9" step="0.1" class="w-64">
+        </div>
+        <div class="flex items-center justify-between gap-2">
+            <label for="qnhSlider">QNH <span id="qnhLabel" class="ctrl-label text-[#FDE500]"></span></label>
+            <input type="range" id="qnhSlider" min="950" max="1050" step="1" class="w-32">
+        </div>
+        <div class="flex items-center justify-between gap-2">
+            <label for="airspeedSlider">Airspeed <span id="airspeedLabel" class="ctrl-label text-[#FDE500]"></span></label>
+            <input type="range" id="airspeedSlider" min="0" max="400" step="0.1" class="w-32">
+        </div>
+        <div class="col-span-2 flex items-center justify-between">
+            <label for="altitudeSlider">Altitude <span id="altitudeLabel" class="ctrl-label text-[#FDE500]"></span> ft</label>
+            <input type="range" id="altitudeSlider" min="-2000" max="45000" step="1" class="w-64">
+        </div>
+    </div>
+
+<script>
+let pitch = 0;
+let roll = 0;
+let heading = 242.5;
+let qnh = 1013;
+let airspeed = 170;
+let altitude = 14000;
+
+const PX_PER_DEG = 7.2;
+const TAPE_SPACING = 50;
+
+function buildPitchLadder() {
+    const ladder = document.getElementById('pitchLadder');
+    ladder.innerHTML = '';
+    const angles = [];
+    for (let a = -90; a <= 90; a += 2.5) {
+        angles.push(a);
+    }
+
+    angles.forEach(angle => {
+        const line = document.createElement('div');
+        line.className = 'absolute flex items-center justify-center w-full';
+
+        const absAngle = Math.abs(angle);
+        let width, height, showLabel = false;
+
+        if (absAngle % 10 === 0) {
+            width = 128;
+            height = 3;
+            showLabel = true;
+        } else if (absAngle % 5 === 0) {
+            width = 72;
+            height = 3;
+        } else {
+            width = 38;
+            height = 2;
+        }
+
+        const offsetPx = -(angle / 2.5) * 18;
+        line.style.transform = `translateY(${offsetPx}px)`;
+        line.style.width = `${width}px`;
+        line.style.height = `${height}px`;
+        line.style.backgroundColor = 'white';
+        line.style.opacity = angle === 0 ? '0' : '1';
+
+        if (showLabel && angle !== 0) {
+            const label = document.createElement('span');
+            label.className = 'absolute text-white text-2xl';
+            label.style.right = `${width / 2 + 68}px`;
+            label.textContent = Math.abs(angle);
+            line.appendChild(label);
+
+            const labelLeft = document.createElement('span');
+            labelLeft.className = 'absolute text-white text-2xl';
+            labelLeft.style.left = `${width / 2 + 68}px`;
+            labelLeft.textContent = Math.abs(angle);
+            line.appendChild(labelLeft);
+        }
+        ladder.appendChild(line);
+    });
+}
+
+function buildHeadingTrack() {
+    const track = document.getElementById('headingTrack');
+    track.innerHTML = '';
+    const firstTick = Math.floor(heading / 5) * 5;
+    const headingPoles = {0: "N", 18: "S", 9: "W", 27: "E"};
+
+    for (let tickHdg = firstTick - 50; tickHdg <= firstTick + 55; tickHdg += 5) {
+        const hdg = ((tickHdg % 360) + 360) % 360;
+        const isMajor = hdg % 10 === 0;
+        const delta = tickHdg - heading;
+
+        const tick = document.createElement('div');
+        tick.className = 'absolute top-0 flex flex-col items-center';
+        tick.style.transform = `translateX(${delta * PX_PER_DEG}px)`;
+
+        const line = document.createElement('div');
+        line.style.width = '3px';
+        line.style.height = `${isMajor ? 12 : 8}px`;
+        line.style.backgroundColor = 'white';
+        tick.appendChild(line);
+
+        if (isMajor) {
+            const label = document.createElement('span');
+            const numberHdg = parseInt(Math.round(hdg / 10).toString().padStart(2, '0'));
+            label.className = 'text-white text-xl';
+            label.textContent = headingPoles[numberHdg] || numberHdg;
+            tick.appendChild(label);
+        }
+        track.appendChild(tick);
+    }
+}
+
+function buildAirspeedTape() {
+    const v = Math.max(40, airspeed);
+    const track = document.getElementById('airspeedTapeTrack');
+    track.innerHTML = '';
+
+    const centerBase = Math.floor(v);
+    const minVal = centerBase - 3;
+    const maxVal = centerBase + 3;
+
+    for (let val = minVal; val <= maxVal; val++) {
+        if (val < 40) continue;
+        const actualY = 65 - (val - v) * TAPE_SPACING;
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", "56");
+        text.setAttribute("y", actualY);
+        text.setAttribute("fill", "white");
+        text.setAttribute("font-family", "'B612 Mono', monospace");
+        text.setAttribute("class", "text-[42px]");
+        text.setAttribute("text-anchor", "start");
+        let digit = Math.abs(val) % 10;
+        text.textContent = digit.toString();
+        track.appendChild(text);
+    }
+
+    const hundredsTrack = document.getElementById('airspeedHundredsTrack');
+    hundredsTrack.innerHTML = '';
+    const rem = ((v % 10) + 10) % 10;
+    let progress = 0;
+
+    if (rem >= 9) {
+        progress = rem - 9;
+    }
+
+    const curr_h = Math.floor(v / 10);
+    const next_h = curr_h + 1;
+    const baseY = 65;
+    const y_curr = baseY + progress * TAPE_SPACING;
+    const y_next = baseY - TAPE_SPACING + progress * TAPE_SPACING;
+
+    const createText = (val, y) => {
+        if (val < 4) return;
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", "56");
+        text.setAttribute("y", y);
+        text.setAttribute("fill", "white");
+        text.setAttribute("font-family", "'B612 Mono', monospace");
+        text.setAttribute("class", "text-[42px]");
+        text.setAttribute("text-anchor", "end");
+        text.textContent = val.toString();
+        hundredsTrack.appendChild(text);
+    };
+
+    createText(curr_h, y_curr);
+    createText(next_h, y_next);
+}
+
+function buildAltitudeTape() {
+    const track = document.getElementById('altitudeTapeTrack');
+    track.innerHTML = '';
+
+    const v = altitude;
+    const centerBase = Math.floor(v / 20) * 20;
+    const minAlt = centerBase - 60;
+    const maxAlt = centerBase + 60;
+
+    for (let val = minAlt; val <= maxAlt; val += 20) {
+        const actualY = 70 - ((val - v) / 20) * TAPE_SPACING;
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", "78");
+        text.setAttribute("y", actualY - 8);
+        text.setAttribute("fill", "white");
+        text.setAttribute("font-family", "'B612 Mono', monospace");
+        text.setAttribute("font-size", "32");
+        text.setAttribute("text-anchor", "start");
+        let absVal = Math.abs(val);
+        let remainder = absVal % 100;
+        text.textContent = remainder.toString().padStart(2, '0');
+        track.appendChild(text);
+    }
+
+    const hundredsTrack = document.getElementById('altitudeHundredsTrack');
+    hundredsTrack.innerHTML = '';
+
+    const abs_v = Math.abs(v);
+    const sign = v < 0 ? -1 : 1;
+    const rem = abs_v % 100;
+    let progress = 0;
+
+    if (rem >= 80) {
+        progress = (rem - 80) / 20;
+    }
+
+    const curr_h = Math.trunc(abs_v / 100) * sign;
+    const next_h = (Math.trunc(abs_v / 100) + 1) * sign;
+    const baseY = 65;
+
+    const y_curr = baseY + progress * TAPE_SPACING * sign;
+    const y_next = baseY + (-TAPE_SPACING * sign) + progress * TAPE_SPACING * sign;
+
+    const createText = (val, y) => {
+        let str = val.toString();
+        if (val === 0) {
+            str = v < 0 ? "-" : "";
+        }
+        if (str === "") return;
+
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", "77");
+        text.setAttribute("y", y);
+        text.setAttribute("fill", "white");
+        text.setAttribute("font-family", "'B612 Mono', monospace");
+        text.setAttribute("class", "text-[38px]");
+        text.setAttribute("text-anchor", "end");
+        text.textContent = str;
+        hundredsTrack.appendChild(text);
+    };
+
+    createText(curr_h, y_curr);
+    createText(next_h, y_next);
+}
+
+function populateData() {
+    document.getElementById('qnhValue').textContent = `${qnh}HP`;
+    machVal = 0.52;
+    machVal > 0.50 ? document.getElementById('machValue').textContent = `M.${machVal.toString().slice(2)}` : document.getElementById('machValue').textContent = `M.`;
+}
+
+function updateAttitude() {
+    const groundEarth = document.getElementById('groundEarth');
+    const pitchLadder = document.getElementById('pitchLadder');
+    const rollPointer = document.getElementById('rollPointerContainer');
+
+    // Apply pitch and roll to the background and ladder
+    groundEarth.style.transform = `rotate(${roll}deg) translateY(${pitch * PX_PER_DEG}px)`;
+    pitchLadder.style.transform = `rotate(${roll}deg) translateY(${pitch * PX_PER_DEG}px)`;
+
+    // Apply ONLY roll to the sky pointer
+    rollPointer.style.transform = roll >= 60 ? `rotate(59deg)` : roll <= -60 ? `rotate(-59deg)` : `rotate(${roll}deg)`;
+}
+
+function updateControlLabels() {
+    document.getElementById('pitchLabel').textContent = pitch.toFixed(1);
+    document.getElementById('rollLabel').textContent = roll.toFixed(0);
+    document.getElementById('headingLabel').textContent = heading.toFixed(1);
+    document.getElementById('qnhLabel').textContent = qnh;
+    document.getElementById('airspeedLabel').textContent = airspeed.toFixed(1);
+    document.getElementById('altitudeLabel').textContent = altitude.toFixed(0);
+}
+
+function renderAll() {
+    buildPitchLadder();
+    buildHeadingTrack();
+    buildAirspeedTape();
+    buildAltitudeTape();
+    populateData();
+    updateAttitude();
+    updateControlLabels();
+}
+
+function wireControls() {
+    const pitchSlider = document.getElementById('pitchSlider');
+    const rollSlider = document.getElementById('rollSlider');
+    const headingSlider = document.getElementById('headingSlider');
+    const qnhSlider = document.getElementById('qnhSlider');
+    const airspeedSlider = document.getElementById('airspeedSlider');
+    const altitudeSlider = document.getElementById('altitudeSlider');
+
+    pitchSlider.value = pitch;
+    rollSlider.value = roll;
+    headingSlider.value = heading;
+    qnhSlider.value = qnh;
+    airspeedSlider.value = airspeed;
+    altitudeSlider.value = altitude;
+
+    pitchSlider.addEventListener('input', e => {
+        pitch = parseFloat(e.target.value);
+        buildPitchLadder();
+        updateAttitude();
+        updateControlLabels();
+    });
+    rollSlider.addEventListener('input', e => {
+        roll = parseFloat(e.target.value);
+        updateAttitude();
+        updateControlLabels();
+    });
+    headingSlider.addEventListener('input', e => {
+        heading = parseFloat(e.target.value);
+        buildHeadingTrack();
+        updateControlLabels();
+    });
+    qnhSlider.addEventListener('input', e => {
+        qnh = parseInt(e.target.value, 10);
+        populateData();
+        updateControlLabels();
+    });
+    airspeedSlider.addEventListener('input', e => {
+        airspeed = parseFloat(e.target.value);
+        buildAirspeedTape();
+        updateControlLabels();
+    });
+    altitudeSlider.addEventListener('input', e => {
+        altitude = parseFloat(e.target.value);
+        buildAltitudeTape();
+        updateControlLabels();
+    });
+}
+
+wireControls();
+renderAll();
+</script>
+</body>
+</html>
