@@ -54,10 +54,10 @@
                         <div id="pitchLadder" class="absolute inset-0 flex flex-col items-center justify-center"></div>
                     </div>
                     <!-- Earth/Ground (moves with pitch and roll) -->
-                    <div id="groundEarth" class="absolute flex flex-col" style="height: 1600px; width: 1000px; top: 50%; left: 50%; margin-top: -800px; margin-left: -500px;">
-                        <div class="bg-[#0388A3]" style="height: 1000px; width: 1000px;"></div>
-                        <div class="bg-white h-1 w-full" style="width: 1000px;"></div>
-                        <div class="bg-[#612D20]" style="height: 1000px; width: 1000px;"></div>
+                    <div id="groundEarth" class="absolute flex flex-col pointer-events-none" style="height: 3000px; width: 3000px; top: 50%; left: 50%; margin-top: -1500px; margin-left: -1500px;">
+                        <div class="bg-[#065CCC] w-full" style="height: 1500px;"></div>
+                        <div class="bg-white h-1 w-full shrink-0"></div>
+                        <div class="bg-[#612D20] w-full" style="height: 1500px;"></div>
                     </div>
 
                     <!-- Roll arc -->
@@ -106,7 +106,7 @@
 
             <!-- Altitude Tape -->
             <div id="altimeterTape" class="h-full w-[63px] bg-[#333333] rounded-r-md flex items-center relative ">
-                <div class="absolute -translate-y-3 -translate-x-[60px] z-20">
+                <div class="absolute -translate-y-4 -translate-x-[60px] z-20">
                     <svg width="122" height="97" viewBox="0 0 122 97" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <clipPath id="altitudeClip">
@@ -238,7 +238,7 @@ function buildHeadingTrack() {
         if (isMajor) {
             const label = document.createElement('span');
             const numberHdg = parseInt(Math.round(hdg / 10).toString().padStart(2, '0'));
-            label.className = 'text-white text-xl';
+            label.className = 'text-white text-2xl';
             label.textContent = headingPoles[numberHdg] || numberHdg;
             tick.appendChild(label);
         }
@@ -353,11 +353,11 @@ function buildAltitudeTape() {
         if (str === "") return;
 
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", "77");
+        text.setAttribute("x", "79");
         text.setAttribute("y", y);
         text.setAttribute("fill", "white");
         text.setAttribute("font-family", "'B612 Mono', monospace");
-        text.setAttribute("class", "text-[38px]");
+        text.setAttribute("class", "text-[40px]");
         text.setAttribute("text-anchor", "end");
         text.textContent = str;
         hundredsTrack.appendChild(text);
