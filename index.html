@@ -422,7 +422,6 @@ function wireControls() {
 
     pitchSlider.addEventListener('input', e => {
         pitch = parseFloat(e.target.value);
-        buildPitchLadder();
         updateAttitude();
         updateControlLabels();
     });
