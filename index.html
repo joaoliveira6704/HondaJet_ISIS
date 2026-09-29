@@ -155,9 +155,10 @@ let pitch = 0;
 let roll = 0;
 let heading = 242.5;
 let qnh = 1013;
-let airspeed = 170;
+let airspeed = 270;
 let altitude = 14000;
 let isStdSet = false;
+let isOverspeed = false;
 
 const PX_PER_DEG = 7.2;
 const TAPE_SPACING = 50;
@@ -264,15 +265,25 @@ function buildAirspeedScale() {
             const y = 224 - (deltaSpd * PX_PER_KNOT);
 
             const tick = document.createElement('div');
-            tick.className = 'absolute right-0 bg-white';
-            tick.style.top = `${y}px`;
-            tick.style.width = spd % 20 === 0 ? '0px' : '18px';
-            tick.style.height = '2px';
-            track.appendChild(tick);
+            const tick2 = document.createElement('div');
+
+            if (spd > 280) {
+              tick.className = 'absolute right-0 bg-red-800 z-2';
+              tick.style.top = `${y}px`;
+              tick.style.width = spd % 20 === 0 ? '0px' : '12px';
+              tick.style.height = '130px';
+              track.appendChild(tick);
+            }
+              tick2.className = 'absolute right-0 bg-white z-[10]';
+              tick2.style.top = `${y}px`;
+              tick2.style.width = spd % 20 === 0 ? '0px' : '18px';
+              tick2.style.height = '2px';
+              track.appendChild(tick2);
+
 
             if (spd % 20 === 0) {
                 const label = document.createElement('span');
-                label.className = 'absolute text-white text-[31px] right-[2px] text-right';
+                label.className = 'absolute text-white text-[31px] right-[2px] z-[10] text-right';
                 label.style.top = `${y}px`;
                 label.style.transform = 'translateY(-50%)';
                 label.textContent = spd.toString();
@@ -296,9 +307,11 @@ function buildAirspeedTape() {
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", "56");
         text.setAttribute("y", actualY);
-        text.setAttribute("fill", "white");
         text.setAttribute("font-family", "'B612 Mono', monospace");
         text.setAttribute("class", "text-[42px]");
+        if (val >= 271) isOverspeed = true;
+        else isOverspeed = false;
+        text.setAttribute("fill", isOverspeed ? "red" : "white");
         text.setAttribute("text-anchor", "start");
         let digit = Math.abs(val) % 10;
         text.textContent = digit.toString();
@@ -325,7 +338,8 @@ function buildAirspeedTape() {
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", "56");
         text.setAttribute("y", y);
-        text.setAttribute("fill", "white");
+        if (isOverspeed && airspeed >= 271) text.setAttribute("fill", "red");
+        else text.setAttribute("fill", "white");
         text.setAttribute("font-family", "'B612 Mono', monospace");
         text.setAttribute("class", "text-[42px]");
         text.setAttribute("text-anchor", "end");
