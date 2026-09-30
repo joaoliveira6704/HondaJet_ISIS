@@ -209,6 +209,7 @@ svg text,
 }
 #hdgPointer {
     position: absolute;
+    transform: translateX(1.5px);
     z-index: 200;
 }
 #headingTape {
@@ -231,13 +232,13 @@ svg text,
 }
 #stdLabel {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 25px;
+    left: 380px;
     z-index: 500;
     padding-left: 0.25rem;
     padding-right: 0.25rem;
     border: 2px solid white;
-    font-size: 12px;
+    font-size: 18px;
     background-color: #161616;
 }
 

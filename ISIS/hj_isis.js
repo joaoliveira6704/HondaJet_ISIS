@@ -295,7 +295,7 @@ class HJ_ISIS extends BaseInstrument {
     }
 
     populateData() {
-            this.stdLabel.textContent = this.isStdSet ? `STD` : `PUSH STD`;
+            this.stdLabel.textContent = this.qnh.toFixed(2) == 1013.25 ? `STD` : "PUSH STD";
 
             this.qnhValueElement.innerHTML = this.isStdSet ? `STD&nbsp;&nbsp;` : `${Math.round(this.qnh)}HP`;
 
