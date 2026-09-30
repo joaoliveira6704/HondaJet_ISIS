@@ -1,0 +1,26 @@
+{
+  "name": "hondajet_isis",
+  "version": "1.0.0",
+  "description": "Integrated Standby Instrument System (ISIS) for the hondajet, compatible with simconnect applications. Created in html+js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaoliveira6704/HondaJet_ISIS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/joaoliveira6704/HondaJet_ISIS/issues"
+  },
+  "homepage": "https://github.com/joaoliveira6704/HondaJet_ISIS#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "node-simconnect": "^4.2.0",
+    "socket.io": "^4.8.4"
+  }
+}

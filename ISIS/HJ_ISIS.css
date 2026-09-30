@@ -1,0 +1,319 @@
+﻿@font-face {
+    font-family: "B612 Mono";
+    src: url("/Pages/VCockpit/Instruments/HA420_Systems/Shared/B612Mono-Regular.ttf")
+        format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    color-scheme: dark;
+}
+
+hj-isis {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.instrument-container {
+    font-family: "B612 Mono", monospace;
+    height: 512px;
+
+    background-color: black;
+    display: flex;
+    flex-shrink: 0;
+}
+
+svg text,
+#pitchLadder span,
+#headingTrack span,
+#machQnh {
+    font-family: "B612 Mono", monospace !important;
+}
+
+/* Layout & Structure */
+.instrument-display {
+    height: 476px;
+    width: 488px;
+    margin-top: 0.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Speed Tape */
+.tape-container {
+    height: 100%;
+    background-color: #333333;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+#speedTape {
+    width: 66px;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+.scale-track {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+#airspeedScaleTrack {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+.speed-svg-container {
+    position: absolute;
+    transform: translateY(-16px);
+    z-index: 20;
+}
+
+/* Center Panel */
+.center-panel {
+    height: 100%;
+    width: 355px;
+    margin-left: 3px;
+    margin-right: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#machQnh {
+    height: 35px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 2rem;
+    color: white;
+    padding: 0 4px;
+}
+
+#machQnh p {
+    font-size: 26px !important;
+    margin-top: 10px;
+}
+
+/* Horizon */
+#artificialHorizon {
+    height: 384px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.pitch-ladder-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    pointer-events: none;
+    overflow: hidden;
+}
+#pitchLadder {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#groundEarth {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    height: 3000px;
+    width: 3000px;
+    top: 50%;
+    left: 50%;
+    margin-top: -1500px;
+    margin-left: -1500px;
+}
+.sky-bg {
+    background-color: #065ccc;
+    width: 100%;
+    height: 1500px;
+}
+.horizon-line {
+    background-color: white;
+    height: 4px;
+    width: 100%;
+    flex-shrink: 0;
+}
+.ground-bg {
+    background-color: #a44f23;
+    width: 100%;
+    height: 1500px;
+}
+
+/* Indicators */
+#staticRollIndicator {
+    position: absolute;
+    transform: translateY(-128px);
+    z-index: 20;
+}
+#rollPointerContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+#rollPointerGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 37px;
+}
+#slipBox {
+    width: 26px;
+    height: 6px;
+    background-color: white;
+    border-radius: 1px;
+    margin-top: 1px;
+    transition: transform 0.05s linear;
+}
+.aircraft-symbol {
+    position: absolute;
+    transform: translateY(10.5px);
+    z-index: 20;
+}
+
+/* Heading */
+.heading-pointer-wrap {
+    height: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#hdgPointer {
+    position: absolute;
+    z-index: 200;
+}
+#headingTape {
+    height: 55px;
+    width: 100%;
+    background-color: #333333;
+    position: relative;
+    overflow: hidden;
+}
+#headingTrack {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    pointer-events: none;
+}
+#stdLabel {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 500;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    border: 2px solid white;
+    font-size: 12px;
+    background-color: #161616;
+}
+
+/* Altitude Tape */
+#altimeterTape {
+    width: 63px;
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+#altitudeScaleTrack {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+.alt-svg-container {
+    position: absolute;
+    transform: translate(-60px, -16px);
+    z-index: 20;
+}
+
+.ladder-line {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.ladder-label {
+    position: absolute;
+    color: white;
+    font-size: 1.5rem;
+}
+.heading-tick {
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.heading-label {
+    color: white;
+    font-size: 1.5rem;
+}
+.overspeed-tick {
+    position: absolute;
+    right: 0;
+    background-color: rgb(153, 27, 27);
+    z-index: 2;
+}
+.airspeed-tick {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    z-index: 10;
+}
+.airspeed-label {
+    position: absolute;
+    color: white;
+    font-size: 31px;
+    right: 2px;
+    z-index: 10;
+    text-align: right;
+}
+.svg-text-42 {
+    font-size: 42px;
+}
+.svg-text-40 {
+    font-size: 40px;
+    letter-spacing: -3px !important;
+}
+.altitude-tick {
+    position: absolute;
+    left: 0;
+    background-color: white;
+}
+.altitude-label {
+    position: absolute;
+    color: white;
+    font-size: 31px;
+}
